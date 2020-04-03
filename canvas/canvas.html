@@ -1,0 +1,311 @@
+<!doctype html>
+<html>
+<head>
+<title>Farm Creeps</title>
+</head>
+<body>
+
+<h1 align="center" >Farm Creeps</h1>
+
+<canvas id="canvas" 
+        style="position: fixed;
+               top: 0;
+               right: 0;
+               bottom: 0;
+               left: 0;
+               margin: auto;"
+	width="600" height="400">
+	</canvas>
+
+<script src='js.js'></script>
+
+<script>
+
+var can = document.getElementById("canvas");
+var c = can.getContext('2d');
+
+player.width = 46;
+player.height = 46;
+
+var game_time;
+var min = 0, sec = 0;
+var score = 0;
+var ship_num = 0;
+var ship_image;
+var bomb_image;
+var bullet_image;
+
+loadResources();
+
+function loadResources() {
+    ship_image = new Image();
+	if(ship_num == 0){
+    ship_image.src = "images/hunter.png";
+    };
+	if(ship_num == 1){
+    ship_image.src = "images/hunter1.png";
+    };
+	
+    bomb_image = new Image();
+    bomb_image.src = "images/bomb.png";
+    
+    bullet_image = new Image();
+    bullet_image.src = "images/bullets.png";
+	
+	creep = new Image();
+    creep.src = "images/creep3.png";
+    
+}
+
+function mainLoop() {
+	var c = can.getContext('2d');
+
+	updateGame();
+	updateBackground();
+	drawBackground(c);
+	updateEnemies();
+	scor();
+if(game.state == 'playing'){
+		updatePlayer();
+		updatePlayerBullets();
+		updateEnemyBullets();
+		checkCollisions();
+		drawEnemies(c);
+		drawPlayer(c);
+		drawEnemyBullets(c);
+		drawPlayerBullets(c);
+	}
+	drawOverlay(c);
+}
+
+
+// =========== player ============
+
+function firePlayerBullet() {
+	//create a new bullet
+	playerBullets.push({
+		x: player.x+14,
+		y: player.y - 5,
+		width:20,
+		height:20,
+		counter:0,
+	});
+}
+
+function drawPlayer(c) {
+    if(player.state == "dead") return;
+    
+    if(player.state == "hit") {
+        drawPlayerExplosion(c);
+    	    return;
+	}
+	if(game.state == 'menu'){
+	if(ship_num == 0){
+    c.drawImage(ship_image, 
+	    1,0, 46,46, //src coords
+	    400, 240, player.width, player.height //dst coords
+	    );
+    };
+	if(ship_num == 1){
+    c.drawImage(ship_image, 
+	   1,0, 46,46, //src coords
+	    400, 240, player.width, player.height //dst coords
+	    );
+    }
+	}
+	else{
+	if(ship_num == 0){
+	    c.drawImage(ship_image, 
+	    1,0, 46,46, //src coords
+	    player.x, player.y, player.width, player.height //dst coords
+	    );
+    };
+	if(ship_num == 1){
+    c.drawImage(ship_image, 
+	    1,0, 46,46, //src coords
+	    player.x, player.y, player.width, player.height //dst coords
+	    );
+    }
+	}
+}
+
+var particles = [];
+function drawPlayerExplosion(c) {
+    //start
+    if(player.counter == 0) {
+        particles = []; //clear any old values
+        for(var i = 0; i<50; i++) {
+            particles.push({
+                    x: player.x + player.width/2,
+                    y: player.y + player.height/2,
+                    xv: (Math.random()-0.5)*2.0*5.0,  // x velocity
+                    yv: (Math.random()-0.5)*2.0*5.0,  // y velocity
+                    age: 0,
+            });
+        }
+    }
+    
+    //update and draw
+    if(player.counter > 0) {
+        for(var i=0; i<particles.length; i++) {
+            var p = particles[i];
+            p.x += p.xv;
+            p.y += p.yv;
+            var v = 255-p.age*3;
+            c.fillStyle = "rgb("+v+","+v+","+v+")";
+            c.fillRect(p.x,p.y,3,3);
+            p.age++;
+        }
+    }
+};
+
+function drawPlayerBullets(c) {
+	c.fillStyle = "blue";
+	for(i in playerBullets) {
+		var bullet = playerBullets[i];
+		var count = Math.floor(bullet.counter/4);
+		var xoff = (count%4)*24;
+		
+		//c.fillRect(bullet.x, bullet.y, bullet.width,bullet.height);
+		c.drawImage(
+		    bullet_image,
+		    xoff+10,0+9,8,8,//src
+		    bullet.x,bullet.y,bullet.width,bullet.height//dst
+		    );
+	}
+}
+
+
+// =========== background ============
+
+function drawBackground(c) {
+	c.fillStyle = "green";
+	c.fillRect(0,0,can.width,can.height);
+}
+
+
+
+// =========== enemies ===============
+
+
+    function drawEnemies(c) {
+            for (var i in enemies) {
+                var enemy = enemies[i];
+                if (enemy.state == "alive") {
+                    c.fillStyle = "green";
+                    drawEnemy(c, enemy, 15);
+                }
+                //this probably won't ever be called.
+                if (enemy.state == "dead") {
+                    enemy.shrink--;
+                    c.drawEnemy(c, enemy, 15);
+                }
+            }
+        }
+
+        function drawEnemy(c, enemy, radius) {
+            var theta = enemy.counter;
+            c.save();
+            c.translate(0, 30);
+            //draw the background circle
+            c.drawImage(
+                creep,
+                1, 0, 46, 46,//src
+                enemy.x, enemy.y, 60, 60//dst
+            );
+            c.restore();
+        }
+
+function createEnemyBullet(enemy) {
+    return {
+        x:enemy.x,
+        y:enemy.y+enemy.height,
+        width:30,
+        height:30,
+        counter:0,
+    }
+}
+
+function drawEnemyBullets(c) {
+    for(var i in enemyBullets) {
+        var bullet = enemyBullets[i];
+        var xoff = (bullet.counter%9)*12 + 1;
+        var yoff = 0.1;
+        c.drawImage(bomb_image,
+            xoff,yoff,11,11,//src
+            bullet.x,bullet.y,bullet.width,bullet.height//dest
+            );
+    }
+}
+
+
+function drawOverlay(c) {
+	if(overlay.counter == -1) return;
+	var alpha = overlay.counter/50.0;
+	if(alpha > 1) alpha = 1;
+	c.globalAlpha = alpha;
+	switch(game.state){
+		case 'over':
+			c.fillStyle = "white";
+			c.font = "20pt times new Roman";
+			c.fillText("Вас уничтожили крипы",100,250);
+			c.font = "14pt times new Roman";
+			c.fillText("Нажмите пробел, чтобы повторить.", 140,300);
+		break;
+		case 'won':
+			c.fillStyle = "	white";
+			c.font = "20pt times new Roman";
+			c.fillText("Победа! Вы уничтожили всех крипов",100,250);
+			c.font = "14pt times new Roman";
+			c.fillText("Нажмите пробел, чтобы повторить.", 140,300);
+		break;
+		case 'pause':
+			c.fillStyle = "white";
+			c.font = "20pt times new Roman";
+			c.fillText("Пауза",280,200);
+			c.font = "14pt times new Roman";
+			c.fillText("Нажмите пробел, чтобы продолжить.", 170,250);
+			c.font = "10pt times new Roman";
+			c.fillText("Для выхода в меню, нажмите M.", 10,can.height-20);
+		break;
+		case 'menu':
+			c.fillStyle = "white";
+			c.font = "30pt times new Roman";
+			c.fillText("Меню",250,50);
+			c.font = "14pt times new Roman";
+			c.fillText('Чтобы начать, нажмите Enter',180,200);
+			c.font = "10pt times new Roman"
+			c.fillText('Стрелки  для выбора героя.', 300, 330);
+			drawPlayer(c);
+			c.font = "24pt times new Roman";
+			c.fillText('Ваш счёт: '+score,10,can.height-65);
+			c.font = "10pt times new Roman";
+			c.fillText("Инструкция :",300, 300);
+			c.fillText("Ваша задача состоит в том чтобы убить",300, 310);
+			c.fillText("крипов. Вы можете управлять героем '←' и '→' ",300, 320);
+			c.fillText(" 'Esc' для паузы  ",300, 340);
+		break;
+	}
+};
+
+
+
+function Start(){
+    game.state = "start";
+    player.state = "alive";
+    overlay.counter = -1;
+	//game_time = 300;
+	
+	
+}
+
+doSetup();
+setInterval(mainLoop,1000/30);
+
+
+
+
+
+</script>
+</body>
+</html>
