@@ -1,0 +1,24 @@
+<center>
+<div id="app" style="width: 800px;">
+<a href="#"
+v-on:click.left.prevent="text = 'left'"
+v-on:click.right.prevent="text = 'right'"
+v-on:click.middle.prevent="text = 'middle'"
+>
+кликни
+</a>
+<p v-if="text != ''">{{ text}}</p>
+</div>
+</center>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+let app = new Vue({
+el: '#app',
+data: {
+text: "",
+},
+methods: {
+},
+});
+</script>

@@ -1,0 +1,22 @@
+<center>
+<div id="app" style="width: 800px;">
+<button v-on:click="getHtmlCode">Показать/скрыть квадрат</button>
+<p v-if="htmlCode != ''" v-html="htmlCode"><p>
+</div>
+</center>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+let app = new Vue({
+el: '#app',
+data: {
+htmlCode: "",
+},
+methods: {
+getHtmlCode: function(){
+if(this.htmlCode == '') this.htmlCode = "<div style='width: 100px; height: 100px; background-color: red;'></div>";
+else this.htmlCode = '';
+},
+},
+});
+</script>

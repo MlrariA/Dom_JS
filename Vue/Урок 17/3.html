@@ -1,0 +1,22 @@
+<center>
+<div id="app" style="width: 800px;">
+<button v-on:click="changeText">Поменять текст</button>
+<p v-once>{{ text }}<p>
+<p>{{ text }}<p>
+</div>
+</center>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+let app = new Vue({
+el: '#app',
+data: {
+text: "Это - кто ",
+},
+methods: {
+changeText: function(){
+this.text = "А это - никто";
+},
+},
+});
+</script>

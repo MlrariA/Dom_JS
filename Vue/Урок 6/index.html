@@ -1,0 +1,25 @@
+<div id="app">
+<ul>
+<li v-for="(item, idx) in items" v-bind:key="idx" v-on:click='squared(idx)'>
+{{ item }}
+</li>
+</ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+let app = new Vue({
+el: '#app',
+data: {
+items: [1, 2, 3, 4, 5],
+},
+methods: {
+squared(idx) {
+let newItems = this.items.slice();
+newItems[idx] = newItems[idx] ** 2;
+this.items = newItems;
+}
+}
+});
+</script>

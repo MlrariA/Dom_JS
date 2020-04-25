@@ -1,0 +1,17 @@
+<div id="app">
+<p v-bind:style="{color: checked ? color1 : color2}">Привет</p>
+<input type="checkbox" v-model="checked">
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+let app = new Vue({
+el: '#app',
+data: {
+checked: false,
+color1: 'red',
+color2: 'black',
+},
+});
+</script>

@@ -1,0 +1,24 @@
+<div id="app">
+<textarea v-model="text" cols="30" rows="10"></textarea>
+<button v-on:click="chunkText">вывести на абзац</button>
+<ul>
+<li v-for="(word, idx) in words" v-bind:key="idx">{{ word }}</li>
+</ul>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+let app = new Vue({
+el: '#app',
+data: {
+text: '',
+words: null,
+},
+methods: {
+chunkText() {
+this.words = this.text.split(' ')
+},
+},
+});
+</script>

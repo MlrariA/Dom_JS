@@ -1,0 +1,26 @@
+<div id="app">
+<template v-if="isShow">
+<p>Абзац 1</p>
+<p>Абзац 2</p>
+<p>Абзац 3</p>
+</template>
+<button v-on:click="showHideEleme">
+{{ isShow ? 'Скрыть' : 'Показать' }}
+</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+let app = new Vue({
+el: '#app',
+data: {
+isShow: true,
+},
+methods: {
+showHideEleme() {
+this.isShow = !this.isShow;
+}
+}
+});
+</script>

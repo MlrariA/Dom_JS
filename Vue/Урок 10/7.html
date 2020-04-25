@@ -1,0 +1,21 @@
+<div id="app">
+<input type="checkbox" v-model="values" value="a">
+<input type="checkbox" v-model="values" value="b">
+<input type="checkbox" v-model="values" value="c">
+<input type="checkbox" v-model="values" value="d">
+<ul>
+<li v-for="(value, idx) in values" v-bind:key="idx">
+{{ value }}
+</li>
+</ul>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+let app = new Vue({
+el: '#app',
+data: {
+values: [],
+},
+});
+</script>

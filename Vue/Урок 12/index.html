@@ -1,0 +1,15 @@
+<div id="app">
+ <p v-bind:class="{valid:this.isValid,invalid:!this.isValid}">Абзац</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script type="text/javascript">
+let app = new Vue({
+el: '#app',
+data: {
+isValid: true,
+},
+});
+console.log(document.querySelector('p'));
+</script>
